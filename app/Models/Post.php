@@ -20,9 +20,9 @@ class Post extends Model
      * この投稿に対する返信を取得します。
      */
     public function replies()
-    {
-        return $this->hasMany(Post::class, 'parent_id');
-    }
+{
+    return $this->hasMany(Reply::class);
+}
 
     /**
      * この返信の親投稿を取得します。

@@ -49,4 +49,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Post::class);
     }
+        // 1人のユーザーは複数の返信を作成できる
+        public function replies()
+        {
+            return $this->hasMany(Reply::class);
+        }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReplyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,4 +52,8 @@ Route::delete('/posts/{post}', [PostController::class, 'destroy'])->middleware([
 
 Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
 
-Route::post('/posts/{post}/replies', [PostController::class, 'storeReply'])->name('posts.replies.store');
+// 返信作成ページへのルート
+Route::post('/posts/{post}/replies', [ReplyController::class, 'store'])->name('replies.store');
+
+// 返信作成ページへのルート
+Route::get('/posts/{post}/replies/create', [ReplyController::class, 'create'])->name('replies.create')->middleware(['auth', 'verified']);

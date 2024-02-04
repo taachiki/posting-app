@@ -22,30 +22,16 @@ class PostController extends Controller
     }
 
     // 投稿詳細を表示
-    public function show(Post $post)
-    {
-        $replies = Post::where('parent_id', $post->id)->get();
-        $repliesCount = $replies->count(); // 返信の件数を取得
-
-        return view('posts.show', compact('post', 'replies', 'repliesCount'));
-    }
+    public function show($id)
+   {
+       $post = Post::with('replies.user')->findOrFail($id);
+       return view('posts.show', compact('post'));
+   }
 
     // 投稿作成ページを表示
     public function create()
     {
         return view('posts.create');
-    }
-
-    // 新規投稿を保存
-    public function store(PostRequest $request)
-    {
-        $post = new Post();
-        $post->title = $request->input('title');
-        $post->content = $request->input('content');
-        $post->user_id = Auth::id();
-        $post->save();
-
-        return redirect()->route('posts.index')->with('flash_message', '投稿が完了しました。');
     }
 
     // 投稿編集ページを表示
@@ -84,21 +70,4 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('flash_message', '投稿を削除しました。');
     }
 
-    // 返信を保存
-    public function storeReply(Request $request, $postId)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-        ]);
-
-        $reply = new Post();
-        $reply->title = $request->input('title');
-        $reply->content = $request->input('content');
-        $reply->user_id = Auth::id();
-        $reply->parent_id = $postId;
-        $reply->save();
-
-        return redirect()->route('posts.show', $postId)->with('flash_message', '返信が投稿されました。');
-    }
 }

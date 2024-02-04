@@ -1,42 +1,27 @@
-<?php
+@extends('layouts.app')
 
-namespace App\Models;
+@section('title', '投稿詳細')
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+@section('content')
+<div class="container mt-4">
+    <h1>{{ $post->title }}</h1>
+    <p>{{ $post->content }}</p>
+    <p>投稿者: {{ $post->user->name }} - 投稿日時: {{ $post->created_at->format('Y-m-d H:i:s') }}</p>
+    <p>返信数: {{ $post->replies->count() }}</p>
 
-class Post extends Model
-{
-    use HasFactory;
+    <div class="mb-4">
+        <a href="{{ route('replies.create', $post->id) }}" class="btn btn-primary">返信</a>
+        {{-- "一覧に戻る" ボタンを追加 --}}
+        <a href="{{ route('posts.index') }}" class="btn btn-secondary">一覧に戻る</a>
+    </div>
 
-    // このモデルで代入を許可する属性
-    protected $fillable = [
-        'title',
-        'content',
-        'user_id',
-    ];
-
-    /**
-     * この投稿に対する返信を取得します。
-     */
-    public function replies()
-    {
-        return $this->hasMany(Post::class, 'parent_id');
-    }
-
-    /**
-     * この返信の親投稿を取得します。
-     */
-    public function parent()
-    {
-        return $this->belongsTo(Post::class, 'parent_id');
-    }
-
-    /**
-     * この投稿を所有するユーザーを取得します。
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-}
+    @foreach($post->replies as $reply)
+        <div class="card mb-2">
+            <div class="card-body">
+                <p class="card-text">{{ $reply->content }}</p>
+                <p class="card-subtitle mb-2 text-muted">投稿者: {{ $reply->user->name }} - 投稿日時: {{ $reply->created_at->format('Y-m-d H:i:s') }}</p>
+            </div>
+        </div>
+    @endforeach
+</div>
+@endsection
